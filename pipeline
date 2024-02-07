@@ -1,0 +1,50 @@
+pipeline {
+    agent any
+
+     parameters{
+        string(name: 'SPEC', defaultValue: "SC1_openVPGoSenTabGoDossierTabCloseVP.js", description: "Enter the script path you want to execute")
+        string(name: 'BRANCH', defaultValue: "main", description: "Branch name")
+     }
+
+    stages {
+        stage('Setup'){
+            steps{
+               echo "Setup the application"
+               bat "npm install -g memlab"
+               composeArgs();
+            }
+        }
+
+        stage('Testing') {
+            stages {
+                stage('TESTS') {
+                    steps{
+                       catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                          bat "memlab run " + TEST_ARG
+                       }
+                    }
+                }
+            }
+        }
+    }
+    post {
+            always {
+                script{
+                       publishHTML([
+                       allowMissing: false,
+                       alwaysLinkToLastBuild: false,
+                       keepAll: true,
+                       reportDir: 'run/results/data',
+                       reportFiles: 'leaks.txt',
+                       reportName: 'Report'])
+                }
+                archiveArtifacts artifacts: 'run/results/**/**', fingerprint: true
+
+            }
+    }
+}
+
+def composeArgs() {
+    TEST_ARG = "--scenario " + SPEC + " --work-dir run/results"
+}
+

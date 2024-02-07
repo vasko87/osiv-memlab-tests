@@ -1,4 +1,4 @@
-const domain = "/osiv-frtest.ivnet.ch";
+const domain = "/fw-next.ivnet.ch/";
 let i = 2;
 
 /**
