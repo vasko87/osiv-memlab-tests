@@ -21,7 +21,10 @@ The scenario performs simple actions to identify memory leaks on the ONet [FRTES
         memlab run --scenario path/to/scenario.js --headful 
     
     To add results directory where you want memlab to dump browser interaction meta data (e.g., screenshots and heap snapshots). 
-  -     memlab run --scenario path/to/scenario.js --headful --work-dir run/results 
+  -     memlab run --scenario path/to/scenario.js --work-dir run/results --headful
+
+    To use arguments url and loop iteration amount(do not mix the order of arguments!).
+  -     memlab run --scenario SC1_openVPGoSenTabGoDossierTabCloseVP.js --work-dir run/results --url https://osiv-pstest.ivnet.ch --loop 30 --headful
 
 ## Flow
 The Flow is as follows:

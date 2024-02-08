@@ -1,4 +1,5 @@
-const domain = "/fw-next.ivnet.ch/";
+const domain = process.argv[8];
+const iterations = process.argv[10]
 let i = 2;
 
 /**
@@ -15,16 +16,17 @@ let i = 2;
  * revert:
  * -        Close VP
  *
- * => repeat 30 times with different VP
+ * => repeat several times with different VP
  * (used search VP by Name = ‘performance’
  * and taking item by item)
  */
 const scenario = {
-  url: () => `https://${domain}`,
+  url: () => `${domain}`,
   // -----------------------------------------------------------
   // skip dashboard and start measuring from vericherte search
   // -----------------------------------------------------------
   setup: async ( page ) => {
+    console.log(iterations);
     console.log('----------------------------------------')
     console.log('----------------------------------------')
     console.log('START SETUP')
@@ -149,7 +151,7 @@ const scenario = {
     console.log('----------------------------------------')
     console.log('END BACK -> snapshot here')
   },
-  repeat: () => 29,
+  repeat: () => iterations,
 }
 
 module.exports = scenario;
