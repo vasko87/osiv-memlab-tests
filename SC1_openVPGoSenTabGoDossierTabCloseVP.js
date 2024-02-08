@@ -1,5 +1,5 @@
 const domain = process.argv[8];
-const iterations = process.argv[10]
+const loop = process.argv[10]
 let i = 2;
 
 /**
@@ -26,7 +26,7 @@ const scenario = {
   // skip dashboard and start measuring from vericherte search
   // -----------------------------------------------------------
   setup: async ( page ) => {
-    console.log(iterations);
+    console.log(loop);
     console.log('----------------------------------------')
     console.log('----------------------------------------')
     console.log('START SETUP')
@@ -151,7 +151,7 @@ const scenario = {
     console.log('----------------------------------------')
     console.log('END BACK -> snapshot here')
   },
-  repeat: () => iterations,
+  repeat: () => loop - 1,
 }
 
 module.exports = scenario;

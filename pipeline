@@ -3,6 +3,10 @@ pipeline {
 
      parameters{
         string(name: 'SPEC', defaultValue: "SC1_openVPGoSenTabGoDossierTabCloseVP.js", description: "Enter the script path you want to execute")
+        choice(name: 'ENV', choices: ['FRTEST','NRTEST','CRTEST', 'FWTEST', 'FWTEST2'], description: "Select the test environment\n FRTEST = 'https://osiv-frtest.ivnet.ch'\n NRTESR = 'https://osiv-nrtest.ivnet.ch' \n CRTESR = 'https://osiv-crtest.ivnet.ch' \n FWTEST = 'https://fw-test.ivnet.ch' \n FWTEST2 = 'https://fw-test2.ivnet.ch'")
+        string(name: 'CUSTOM_ENV', defaultValue: "", description: "Enter the custom url")
+        string(name: 'LOOP', defaultValue: "9", description: "Enter the number of iterations")
+        booleanParam(name: 'HEADLESS', defaultValue: true)
         string(name: 'BRANCH', defaultValue: "main", description: "Branch name")
      }
 
@@ -12,39 +16,58 @@ pipeline {
                echo "Setup the application"
                bat "npm install -g memlab"
                composeArgs();
+               setJobName();
             }
         }
 
-        stage('Testing') {
-            stages {
-                stage('TESTS') {
-                    steps{
-                       catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                          bat "memlab run " + TEST_ARG
-                       }
-                    }
+        stage('TESTS') {
+             steps{
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                   bat "memlab run " + TEST_ARG
                 }
-            }
+             }
         }
+
     }
     post {
             always {
-                script{
-                       publishHTML([
-                       allowMissing: false,
-                       alwaysLinkToLastBuild: false,
-                       keepAll: true,
-                       reportDir: 'run/results/data',
-                       reportFiles: 'leaks.txt',
-                       reportName: 'Report'])
-                }
                 archiveArtifacts artifacts: 'run/results/**/**', fingerprint: true
-
             }
     }
 }
 
 def composeArgs() {
-    TEST_ARG = "--scenario " + SPEC + " --work-dir run/results"
+    if (ENV == "FRTEST") {
+        ENV_URL = "https://osiv-frtest.ivnet.ch"
+    }
+    if (ENV == "NRTEST") {
+        ENV_URL = "https://osiv-nrtest.ivnet.ch"
+    }
+    if (ENV == "CRTEST") {
+        ENV_URL = "https://osiv-crtest.ivnet.ch"
+    }
+    if (ENV == "FWTEST") {
+        ENV_URL = "https://fw-test.ivnet.ch"
+    }
+    if (ENV == "FWTEST2") {
+        ENV_URL = "https://fw-test2.ivnet.ch"
+    }
+    if (CUSTOM_ENV != "") {
+        ENV_URL = CUSTOM_ENV
+        ENV = "CUSTOM"
+    }
+    if (HEADLESS)
+    {
+        HEADLESS = "--headless"
+    } else {
+        HEADLESS = "--headful"
+    }
+
+    TEST_ARG = "--scenario " + SPEC + " --work-dir run/results --url " + ENV_URL + " --loop " + LOOP + " " + HEADLESS
+}
+
+def setJobName(){
+    echo "ENV = [" + ENV_URL + "], loop = [" + LOOP + "], headless = [" + HEADLESS + "]"
+    currentBuild.displayName = ENV + "_LOOP_" + LOOP
 }
 
