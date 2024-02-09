@@ -66,21 +66,21 @@ const scenario = {
     console.log('----------------------------------------')
     console.log('Find and click versicherte menu block')
     const versicherteMenuBlock = await page.waitForSelector('[class*="level-1"][menuname="Versicherte"]');
-    await page.waitForTimeout(2000);
+    await page.waitForNetworkIdle();
     await versicherteMenuBlock.click();
 
     // Find and click versicherte menu item
     console.log('----------------------------------------')
     console.log('find and click versicherte menu item')
     const versicherteMenuItem = await page.waitForSelector('[class*="level-2"][menuname="Versicherte"]');
-    await page.waitForTimeout(2000);
+    await page.waitForNetworkIdle();
     await versicherteMenuItem.click();
 
     // seartch for versicherte
     console.log('----------------------------------------')
     console.log('Search for Versicherte')
     const versicherteNameTxt = await page.waitForSelector('[akid="sStammQueryB-BRS_Versicherten_Name"] input');
-    await page.waitForTimeout(2000);
+    await page.waitForNetworkIdle();
 
     await versicherteNameTxt.focus();
     await page.keyboard.sendCharacter("performance");
@@ -100,37 +100,33 @@ const scenario = {
     // select versichert
     console.log('----------------------------------------')
     console.log(`Open versicherter ${i-1}`)
-    await page.waitForTimeout(2000);
+    await page.waitForNetworkIdle();
     const versicherteLink = await page.waitForSelector(`.objbox tr:nth-child(${i}) td:nth-child(1) a`);
     await versicherteLink.click();
 
     console.log('----------------------------------------')
     console.log('waiting Detail page opened')
-    await page.waitForTimeout(2000);
+    await page.waitForNetworkIdle();
     const detailViewEl = await page.waitForSelector("[style*='opacity: 1'] [akid='sStammDetailBasisdatenForm']");
-    await page.waitForTimeout(2000);
+    await page.waitForNetworkIdle();
 
-    // select dossier
     console.log('----------------------------------------')
     console.log('Navigate to SEN tab')
     const sendungenTab = await page.waitForSelector('[akid="SimpleSwatTabbar-Sendungen"] div');
     await sendungenTab.click();
     console.log('----------------------------------------')
-    console.log('wait 15 sec for Sendungen loaded')
-    await page.waitForTimeout(15000);
+    console.log('wait for Sendungen loaded')
+    await page.waitForNetworkIdle();
 
-    // select dossier
     console.log('----------------------------------------')
     console.log('Navigate to dossier')
-    // wait 15 sec to make sure the Versicherte screen is completely loaded
     const dossierTab = await page.waitForSelector('[akid="SimpleSwatTabbar-Dossier"] div');
     await dossierTab.click();
 
-    // Wait 15 sec for dossier loaded
     console.log('----------------------------------------')
-    console.log('wait 15 sec for dossier loaded')
-    await page.waitForTimeout(15000);
-
+    console.log('wait for dossier loaded')
+    await page.waitForNetworkIdle();
+    
     console.log('----------------------------------------')
     console.log('cklick Home btn')
     const homeBtn = await page.waitForSelector('.dhx_cell_toolbar_def');
@@ -142,7 +138,6 @@ const scenario = {
     console.log('----------------------------------------')
     console.log('----------------------------------------')
     console.log('START BACK')
-    // close versicherter
     console.log('----------------------------------------')
     console.log('close versicherter')
     const closeButton = await page.waitForSelector('.vue-taskbar-group-content .vue-close-icon');
