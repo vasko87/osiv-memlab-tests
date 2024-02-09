@@ -3,7 +3,7 @@ const loop = process.argv[10]
 let i = 2;
 
 /**
- * SCENARIO:
+ * SCENARIO FOR 100 iterations(opens the same VP each time):
  * page-load:
  * -        pre-conditions: login -> navigation to VP tab -> searching for VP
  *

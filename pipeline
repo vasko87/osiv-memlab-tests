@@ -2,11 +2,13 @@ pipeline {
     agent any
 
      parameters{
-        string(name: 'SPEC', defaultValue: "SC1_openVPGoSenTabGoDossierTabCloseVP.js", description: "Enter the script path you want to execute")
+        choice(name: 'SPEC', choices: ['SC1_openDifferentVPGoSenTabGoDossierTabCloseVP.js','SC2_openSameVPGoSenTabGoDossierTabCloseVP.js'], description: "Script to execute.\n SC1_openDifferentVPGoSenTabGoDossierTabCloseVP - can be used for NOT more than 50 loops;\n SC2_openSameVPGoSenTabGoDossierTabCloseVP - use for unlimited loops amount")
+        string(name: 'CUSTOM_SPEC', description: "Enter the script path you want to execute(takes SPEC parameter if leave empty)")
         choice(name: 'ENV', choices: ['FRTEST','NRTEST','CRTEST', 'FWTEST', 'FWTEST2'], description: "Select the test environment\n FRTEST = 'https://osiv-frtest.ivnet.ch'\n NRTESR = 'https://osiv-nrtest.ivnet.ch' \n CRTESR = 'https://osiv-crtest.ivnet.ch' \n FWTEST = 'https://fw-test.ivnet.ch' \n FWTEST2 = 'https://fw-test2.ivnet.ch'")
         string(name: 'CUSTOM_ENV', defaultValue: "", description: "Enter the custom url")
         string(name: 'LOOP', defaultValue: "9", description: "Enter the number of iterations")
         booleanParam(name: 'HEADLESS', defaultValue: true)
+        booleanParam(name: 'ERROR_HANDLING', defaultValue: false, description: "If checked, then test closes unexpected Errors by cklicking 'Ok' btn.\n NOTE: enabling this feature makes execution slower, since each click action waits ~3 sec to check if Error appeared or not")
         string(name: 'BRANCH', defaultValue: "main", description: "Branch name")
      }
 
@@ -56,6 +58,9 @@ def composeArgs() {
         ENV_URL = CUSTOM_ENV
         ENV = "CUSTOM"
     }
+    if (CUSTOM_SPEC != "") {
+        SPEC = CUSTOM_SPEC
+    }
     if (HEADLESS)
     {
         HEADLESS = "--headless"
@@ -63,7 +68,7 @@ def composeArgs() {
         HEADLESS = "--headful"
     }
 
-    TEST_ARG = "--scenario " + SPEC + " --work-dir run/results --url " + ENV_URL + " --loop " + LOOP + " " + HEADLESS
+    TEST_ARG = "--scenario " + SPEC + " --work-dir run/results --url " + ENV_URL + " --loop " + LOOP + " " + HEADLESS + " " + "--errorHandling " + ERROR_HANDLING
 }
 
 def setJobName(){
